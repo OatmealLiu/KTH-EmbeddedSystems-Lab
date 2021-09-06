@@ -39,6 +39,7 @@ procedure ProducerConsumer_Prot is
 			
          -- ==> Complete code: Write to Buffer
          CB.Put(I);
+         Put_Line("P: " & Integer'Image(I));
          -- Next 'Release' in 50..250ms
          Next := Next + Milliseconds(Random(G));
          delay until Next;
@@ -52,10 +53,9 @@ procedure ProducerConsumer_Prot is
       Next := Clock;
       for I in 1..N loop
          -- Read from X
-			
          -- ==> Complete code: Read from Buffer 
 			CB.Get(X);
-         Put_Line(Integer'Image(X));
+         Put_Line("C: " & Integer'Image(X));
          Next := Next + Milliseconds(Random(G));
          delay until Next;
       end loop;

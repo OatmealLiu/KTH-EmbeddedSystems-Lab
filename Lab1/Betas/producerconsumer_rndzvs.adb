@@ -17,7 +17,7 @@ procedure ProducerConsumer_Rndzvs is
    use Random_Delay;
    G : Generator;
 
-   task Buffer is
+   task type Buffer is
       entry Append(I : in Integer);
       entry Take(I : out Integer);
    end Buffer;
@@ -31,42 +31,63 @@ procedure ProducerConsumer_Rndzvs is
          type Index is mod Size;
          type Item_Array is array(Index) of Integer;
          B : Item_Array;
-         In_Ptr, Out_Ptr, Count : Index := 0;
+         -- In_Ptr, Out_Ptr, Count : Index := 0; <= original implementation
+         In_Ptr, Out_Ptr : Index := 0;
+         Count : Integer range 0..Size := 0;
    begin
       loop
          select
-				-- => Complete Code: Service Append
+            -- => Complete Code: Service Take
+				when Count < Size =>
+               accept Append(I : in Integer) do
+                  B(In_Ptr) := I;
+                  In_Ptr := In_Ptr + 1;
+                  Count := Count + 1;
+               end Append;
          or
 				-- => Complete Code: Service Take
+            when Count > 0 =>
+               accept Take(I : out Integer) do
+                  I := B(Out_Ptr);
+                  Out_Ptr := Out_Ptr + 1;
+                  Count := Count - 1;
+               end Take;
          or
 				-- => Termination
+            terminate;
          end select;
       end loop;
    end Buffer;
-      
-   task body Producer is
+   
+   CB : Buffer;                                             -- Initialize a CircularBuffer CB
+                                                            --    - Size    := 4;
+                                                            --    - In_Ptr  := 0
+                                                            --    - Out_Ptr := 0
+                                                            --    - Count   := 0
+
+   task body Producer is                                    -- Task-Producer: write data to the BUFFER
       Next : Time;
    begin
       Next := Clock;
       for I in 1..N loop
-			
          -- => Complete code: Write to X
-
+         CB.Append(I);
+         Put_Line("P: " & Integer'Image(I));
          -- Next 'Release' in 50..250ms
          Next := Next + Milliseconds(Random(G));
          delay until Next;
       end loop;
    end;
 
-   task body Consumer is
+   task body Consumer is                                    -- Task-Consumer: read data to the BUFFER
       Next : Time;
       X : Integer;
    begin
       Next := Clock;
       for I in 1..N loop
          -- Complete Code: Read from X
-
-         Put_Line(Integer'Image(X));
+			CB.Take(X);
+         Put_Line("C: " & Integer'Image(X));
          Next := Next + Milliseconds(Random(G));
          delay until Next;
       end loop;
