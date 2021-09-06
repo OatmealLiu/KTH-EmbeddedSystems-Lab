@@ -1,0 +1,22 @@
+V "GNAT Lib v9"
+M P W=b
+A -mtune=generic
+A -march=x86-64
+P ZX
+
+RN
+
+U gmain%b		gmain.adb		dca85432 NE OO SU
+W greetings%s		greetings.adb		greetings.ali
+
+D gmain.adb		20210903084202 3df11c63 gmain%b
+D greetings.ads		20210903084351 e1594851 greetings%s
+D system.ads		20200312110721 4635ec04 system%s
+X 1 gmain.adb
+3U11*Gmain 3b11 8l5 8t10
+X 2 greetings.ads
+1K9*Greetings 1|1w6 5r5 6r5 7r5 2|5e14
+2U15*Hello 1|5s15
+3U15*Propose 1|6s15
+4U15*Goodbye 1|7s15
+
